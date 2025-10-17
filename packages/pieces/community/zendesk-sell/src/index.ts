@@ -6,6 +6,11 @@ import { createNote } from './lib/actions/create-note';
 import { createTask } from './lib/actions/create-task';
 import { updateContact } from './lib/actions/update-contact';
 import { updateDeal } from './lib/actions/update-deal';
+import { findDeal } from './lib/actions/find-deal';
+import { findContact } from './lib/actions/find-contact';
+import { findLead } from './lib/actions/find-lead';
+import { findCompany } from './lib/actions/find-company';
+import { findUser } from './lib/actions/find-user';
 
 export const zendeskSell = createPiece({
   displayName: 'Zendesk Sell',
@@ -21,6 +26,11 @@ export const zendeskSell = createPiece({
     updateDeal,
     createNote,
     createTask,
+    findDeal,
+    findContact,
+    findLead,
+    findCompany,
+    findUser
   ],
   triggers: [],
 });
