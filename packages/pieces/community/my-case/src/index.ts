@@ -1,4 +1,5 @@
-import { createPiece } from '@activepieces/pieces-framework';
+import { createCustomApiCallAction } from '@activepieces/pieces-common';
+import { createPiece, OAuth2PropertyValue } from '@activepieces/pieces-framework';
 import { createCall } from './lib/actions/create-call';
 import { createCase } from './lib/actions/create-case';
 import { createCaseStage } from './lib/actions/create-case-stage';
@@ -35,7 +36,7 @@ import { findStaff } from './lib/actions/find-staff';
 import { updateCase } from './lib/actions/update-case';
 import { updateCompany } from './lib/actions/update-company';
 import { updatePerson } from './lib/actions/update-person';
-import { myCaseAuth } from './lib/common';
+import { myCaseApi, myCaseAuth } from './lib/common';
 import { caseAddedOrUpdated } from './lib/triggers/case-added-or-updated';
 import { companyAddedOrUpdated } from './lib/triggers/company-added-or-updated';
 import { eventAddedOrUpdated } from './lib/triggers/event-added-or-updated';
@@ -85,6 +86,14 @@ export const myCase = createPiece({
     findOrCreatePerson,
     findOrCreatePracticeArea,
     findOrCreateReferralSource,
+    createCustomApiCallAction({
+      auth: myCaseAuth,
+      baseUrl: () => myCaseApi.baseUrl,
+      authMapping: async (auth) => {
+        const { access_token } = auth as OAuth2PropertyValue;
+        return myCaseApi.getAuthHeader(access_token);
+      },
+    }),
   ],
   triggers: [
     caseAddedOrUpdated,
