@@ -1,10 +1,10 @@
-import {
-  httpClient,
-  HttpMethod
-} from '@activepieces/pieces-common';
+import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { PieceAuth } from '@activepieces/pieces-framework';
 import { OAuth2GrantType } from '@activepieces/shared';
-import { CreateCaseParams, CreateCaseResponse } from './types';
+import {
+  CreateCaseParams,
+  CreateCaseResponse,
+} from './types';
 
 export const myCaseAuth = PieceAuth.OAuth2({
   description: 'MyCase OAuth',
@@ -34,5 +34,32 @@ export const myCaseApi = {
     });
     return response.body;
   },
+  createCaseStage: async () => {},
+  createCompany: async () => {},
+  createCustomField: async () => {},
+  createDocument: async () => {},
+  createEvent: async () => {},
+  createExpense: async () => {},
+  createLead: async () => {},
+  createLocation: async () => {},
+  createNote: async () => {},
+  createPerson: async () => {},
+  createPracticeArea: async () => {},
+  createReferralSource: async () => {},
+  createTask: async () => {},
+  createTimeEntry: async () => {},
+  createCall: async () => {},
+  updateCase: async () => {},
+  updateCompany: async () => {},
+  updatePerson: async () => {},
+  listCases: async () => {},
+  listCallers: async () => {},
+  listCaseStages: async () => {},
+  listCompanyContacts: async () => {},
+  listLocations: async () => {},
+  listPeopleGroups: async () => {},
+  listPersonContacts: async () => {},
+  listPracticeAreas: async () => {},
+  listReferralSources: async () => {},
+  listStaff: async () => {},
 };
-
