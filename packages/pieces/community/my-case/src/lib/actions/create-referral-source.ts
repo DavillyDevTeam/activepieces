@@ -1,7 +1,8 @@
-import { createAction, Property } from '@activepieces/pieces-framework';
+import { createAction } from '@activepieces/pieces-framework';
+import { myCaseAuth } from '../common';
 
 export const createReferralSource = createAction({
-  // auth: check https://www.activepieces.com/docs/developers/piece-reference/authentication,
+  auth: myCaseAuth,
   name: 'createReferralSource',
   displayName: 'Create Referral Source',
   description: 'Creates a new referral source.',

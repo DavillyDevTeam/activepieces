@@ -1,7 +1,8 @@
-import { createAction, Property } from '@activepieces/pieces-framework';
+import { createAction } from '@activepieces/pieces-framework';
+import { myCaseAuth } from '../common';
 
 export const findCaller = createAction({
-  // auth: check https://www.activepieces.com/docs/developers/piece-reference/authentication,
+  auth: myCaseAuth,
   name: 'findCaller',
   displayName: 'Find Caller',
   description: '	Finds a caller.',

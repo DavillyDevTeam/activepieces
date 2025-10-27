@@ -1,7 +1,8 @@
-import { createAction, Property } from '@activepieces/pieces-framework';
+import { createAction } from '@activepieces/pieces-framework';
+import { myCaseAuth } from '../common';
 
 export const createCustomField = createAction({
-  // auth: check https://www.activepieces.com/docs/developers/piece-reference/authentication,
+  auth: myCaseAuth,
   name: 'createCustomField',
   displayName: 'Create Custom Field',
   description: 'Creates a new custom field.',

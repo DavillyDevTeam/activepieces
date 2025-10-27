@@ -1,7 +1,8 @@
-import { createAction, Property } from '@activepieces/pieces-framework';
+import { createAction } from '@activepieces/pieces-framework';
+import { myCaseAuth } from '../common';
 
 export const findOrCreateCaseStage = createAction({
-  // auth: check https://www.activepieces.com/docs/developers/piece-reference/authentication,
+  auth: myCaseAuth,
   name: 'findOrCreateCaseStage',
   displayName: 'Find or Create Case Stage',
   description: 'Finds or creates a case stage.',

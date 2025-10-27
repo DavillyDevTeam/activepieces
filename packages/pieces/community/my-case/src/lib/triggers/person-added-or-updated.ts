@@ -1,7 +1,9 @@
 
 import { createTrigger, TriggerStrategy } from '@activepieces/pieces-framework';
+import { myCaseAuth } from '../common';
+
 export const personAddedOrUpdated = createTrigger({
-    // auth: check https://www.activepieces.com/docs/developers/piece-reference/authentication,
+    auth: myCaseAuth,
     name: 'personAddedOrUpdated',
     displayName: 'Person Added or Updated',
     description: 'Fires when a person has been added or updated.',

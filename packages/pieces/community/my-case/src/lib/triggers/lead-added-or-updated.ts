@@ -1,7 +1,9 @@
 
 import { createTrigger, TriggerStrategy } from '@activepieces/pieces-framework';
+import { myCaseAuth } from '../common';
+
 export const leadAddedOrUpdated = createTrigger({
-    // auth: check https://www.activepieces.com/docs/developers/piece-reference/authentication,
+    auth: myCaseAuth,
     name: 'leadAddedOrUpdated',
     displayName: 'Lead Added or Updated',
     description: 'Fires when a lead has been added or updated.',
