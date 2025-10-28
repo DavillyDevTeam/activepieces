@@ -1,5 +1,3 @@
-import { string } from "zod";
-
 // Common Types
 export interface AuthenticationParams {
   access_token: string;
@@ -170,7 +168,7 @@ export interface CreateCompanyResponse {
   updated_at: string;
 }
 
-// Anotação para mim: Conferir daqui para baixo (pRECONCEITO COM GENTE INICIANTE)
+// TODO: Conferir daqui para baixo 
 export interface CreateCustomFieldParams extends AuthenticationParams {
   name: string;
   parent_type: string;
@@ -327,15 +325,21 @@ export interface CreateCallParams extends AuthenticationParams {}
 
 export interface CreateCallResponse {}
 
-export interface UpdateCaseParams extends AuthenticationParams {}
+export interface UpdateCaseParams extends AuthenticationParams {
+  id: string;
+}
 
 export interface UpdateCaseResponse {}
 
-export interface UpdateCompanyParams extends AuthenticationParams {}
+export interface UpdateCompanyParams extends AuthenticationParams {
+  id: string;
+}
 
 export interface UpdateCompanyResponse {}
 
-export interface UpdatePersonParams extends AuthenticationParams {}
+export interface UpdatePersonParams extends AuthenticationParams {
+  id: string;
+}
 
 export interface UpdatePersonResponse {}
 
@@ -355,10 +359,11 @@ export interface ListCaseStagesParams extends AuthenticationParams {}
 
 export interface ListCaseStagesResponse {}
 
-export interface ListCompanyContactsParams extends AuthenticationParams {}
-
+export interface ListCompanyContactsParams extends AuthenticationParams {
   companyId: string;
+}
 
+  
 export interface ListCompanyContactsResponse {}
 
 export interface ListLocationsParams extends AuthenticationParams {}

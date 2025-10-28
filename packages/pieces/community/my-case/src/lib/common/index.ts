@@ -2,6 +2,8 @@ import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { PieceAuth } from '@activepieces/pieces-framework';
 import { OAuth2GrantType } from '@activepieces/shared';
 import {
+  CreateCallParams,
+  CreateCallResponse,
   CreateCaseParams,
   CreateCaseResponse,
   CreateCaseStageParams,
@@ -21,7 +23,6 @@ import {
   CreateLocationParams,
   CreateLocationResponse,
   CreateNoteParams,
-  CreateNoteResponse,
   CreatePersonParams,
   CreatePersonResponse,
   CreatePracticeAreaParams,
@@ -32,18 +33,9 @@ import {
   CreateTaskResponse,
   CreateTimeEntryParams,
   CreateTimeEntryResponse,
-  CreateCallParams,
-  CreateCallResponse,
-  UpdateCaseParams,
-  UpdateCaseResponse,
-  UpdateCompanyParams,
-  UpdateCompanyResponse,
-  UpdatePersonParams,
-  UpdatePersonResponse,
+  ListCallersParams,
   ListCasesParams,
   ListCasesResponse,
-  ListCallersParams,
-  ListCallersResponse,
   ListCaseStagesParams,
   ListCaseStagesResponse,
   ListCompanyContactsParams,
@@ -60,6 +52,12 @@ import {
   ListReferralSourcesResponse,
   ListStaffParams,
   ListStaffResponse,
+  UpdateCaseParams,
+  UpdateCaseResponse,
+  UpdateCompanyParams,
+  UpdateCompanyResponse,
+  UpdatePersonParams,
+  UpdatePersonResponse
 } from './types';
 
 export const myCaseAuth = PieceAuth.OAuth2({
@@ -92,6 +90,9 @@ export const myCaseApi = {
     tasks: '/tasks',
     timeEntries: '/time_entries',
     calls: '/calls',
+    peopleGroups: '/people_groups',
+    personContacts: '', // TODO: Maybe doesn't exist
+    staff: '/staff',
   },
   getAuthHeader: (access_token: string) => {
     return {
