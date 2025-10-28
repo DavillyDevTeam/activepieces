@@ -1,3 +1,6 @@
+import { StringFormatOption } from "@sinclair/typebox";
+import { boolean, number, string } from "zod/v4";
+
 // Common Types
 export interface AuthenticationParams {
   access_token: string;
@@ -269,12 +272,11 @@ export interface CreateExpenseResponse {
   staff: {
     id: number
   },
-  invoices: [
+  invoices: 
     {
       id: number
-    }
-  ],
-  custom_field_values: [
+    }[],
+  custom_field_values: 
     {
       custom_field: {
         id: number
@@ -283,19 +285,112 @@ export interface CreateExpenseResponse {
       value: string,
       created_at: string,
       updated_at: string
-    }
-  ],
+    }[],
   created_at: string,
   updated_at: string
 }
 
-export interface CreateLeadParams extends AuthenticationParams {}
+export interface CreateLeadParams extends AuthenticationParams {
+  email?: string;
+  first_name: string;
+  middle_initial?: string,
+  last_name: string;
+  address?: {
+    address1?: string;
+    address2?: string;
+    city?: string;
+    state?: string;
+    zip_code?: string;
+    country?: string;
+  }
+  cell_phone_number?: string;
+  work_phone_number?: string;
+  home_phone_number?: string;
+  lead_details?: string;
+  birthdate?: string;
+  drivers_license_number?: string;
+  drivers_license_state?: string;
+  referral_source_reference?: {
+    id?: number;
+  }
+  custom_field_values?: {
+    custom_field: {
+      id?: number;
+    }
+    value: string | number | boolean;
+    }[];
+}
 
-export interface CreateLeadResponse {}
+export interface CreateLeadResponse {
+  id: number,
+  email: string,
+  first_name: string,
+  middle_initial: string,
+  last_name: string,
+  address: {
+    address1: string,
+    address2: string,
+    city: string,
+    state: string,
+    zip_code: string,
+    country: string
+  },
+  cell_phone_number: string,
+  work_phone_number: string,
+  home_phone_number: string,
+  lead_details: string,
+  birthdate: string,
+  drivers_license_number: string,
+  drivers_license_state: string,
+  status: string,
+  approved: boolean,
+  referral_source: string,
+  referral_source_reference: {
+    id: number
+  },
+  referred_by: {
+    id: number
+  },
+  custom_field_values: 
+    {
+      custom_field: {
+        id: number,
+        field_type: string
+      },
+      value: string | number | boolean,
+      created_at: string,
+      updated_at: string
+    }[],
+  updated_at: string,
+  created_at: string
+}
 
-export interface CreateLocationParams extends AuthenticationParams {}
+export interface CreateLocationParams extends AuthenticationParams {
+  name: string;
+  address?: {
+    address1?: string;
+    address2?: string;
+    city?: string;
+    state?: string;
+    zip_code?: string;
+    country?: string;
+  }
+}
 
-export interface CreateLocationResponse {}
+export interface CreateLocationResponse {
+    id: number,
+  name: string,
+  address: {
+    address1: string,
+    address2: string,
+    city: string,
+    state: string,
+    zip_code: string,
+    country: string
+  },
+  created_at: string,
+  updated_at: string
+}
 
 export interface CreateNoteParams extends AuthenticationParams {
   // Esse é complexo, pode deixar comigo
@@ -303,25 +398,201 @@ export interface CreateNoteParams extends AuthenticationParams {
 
 export interface CreateNoteResponse {}
 
-export interface CreatePersonParams extends AuthenticationParams {} export interface CreatePersonResponse {}
+export interface CreatePersonParams extends AuthenticationParams {
+  email?: string,
+  first_name: string,
+  middle_name?: string,
+  last_name: string,
+  address?: {
+    address1?: string,
+    address2?: string,
+    city?: string,
+    state?: string, 
+    zip_code?: string,
+    country?: string
+  }
+  cell_phone_number?: string,
+  work_phone_number?: string,
+  home_phone_number?: string,
+  fax_phone_number?: string,
+  birthdate?: string,
+  notes?: string,
+  people_group?: {
+    id?: number
+  }
+  cases?: {
+    id?: number
+  }
+  custom_field:{
+    id: number
+  }
+  value: string | number | boolean
+}
 
-export interface CreatePracticeAreaParams extends AuthenticationParams {}
+export interface CreatePersonResponse {
+    id: number,
+  email: string,
+  first_name: string,
+  middle_initial: string,
+  middle_name: string,
+  last_name: string,
+  address: {
+    address1: string,
+    address2: string,
+    city: string,
+    state: string,
+    zip_code: string,
+    country: string
+  },
+  cell_phone_number: string,
+  work_phone_number: string,
+  home_phone_number: string,
+  fax_phone_number: string,
+  people_group: {
+    id: number
+  },
+  notes: string,
+  birthdate: string,
+  archived: boolean,
+  cases: 
+    {
+      id: number
+    }[],
+  custom_field_values: 
+    {
+      custom_field: {
+        id: number,
+        field_type: string
+      },
+      value: string,
+      created_at: string,
+      updated_at: string
+    }[],
+  updated_at: string,
+  created_at: string
+}
 
-export interface CreatePracticeAreaResponse {}
+export interface CreatePracticeAreaParams extends AuthenticationParams {
+  name: string;
+}
 
-export interface CreateReferralSourceParams extends AuthenticationParams {}
+export interface CreatePracticeAreaResponse {
+  id: number,
+  name: string,
+  created_at: string,
+  updated_at:string
+}
 
-export interface CreateReferralSourceResponse {}
+export interface CreateReferralSourceParams extends AuthenticationParams {
+  name: string
+}
 
-export interface CreateTaskParams extends AuthenticationParams {}
+export interface CreateReferralSourceResponse {
+  id: number,
+  name: string,
+  created_at: string,
+  updated_at: string
+}
 
-export interface CreateTaskResponse {}
+export interface CreateTaskParams extends AuthenticationParams {
+  name: string,
+  description?: string,
+  priority: string,
+  due_date: string,
+  completed?: boolean,
+  case?: {
+    id?: number
+  },
+  staff: {
+    id: number
+  }
+}
 
-export interface CreateTimeEntryParams extends AuthenticationParams {}
+export interface CreateTaskResponse {
+  id: number,
+  name: string,
+  description: string,
+  priority: string,
+  due_date: string,
+  completed: boolean,
+  case: {
+    id: number
+  },
+  staff: {
+    id: number
+  },
+  created_at: string,
+  updated_at: string,
+  completed_at: string
+}
 
-export interface CreateTimeEntryResponse {}
+export interface CreateTimeEntryParams extends AuthenticationParams {
+  activity_name: string,
+  description?: string,
+  billable?: boolean,
+  entry_date: string,
+  rate: number,
+  hours: number,
+  flat_fee?: boolean,
+  case: {
+    id: number
+  },
+  staff: {
+    id: number
+  }
+}
 
-export interface CreateCallParams extends AuthenticationParams {}
+export interface CreateTimeEntryResponse {
+    id: number,
+  activity_name: string,
+  description: string,
+  billable: boolean,
+  entry_date: string,
+  rate: string,
+  hours: number,
+  flat_fee: boolean,
+  case: {
+    id: number
+  },
+  staff: {
+    id: number
+  },
+  invoices: [
+    {
+      id: number
+    }
+  ],
+  custom_field_values: 
+    {
+      custom_field: {
+        id: number,
+        field_type: string
+      },
+      value: string,
+      created_at: string,
+      updated_at: string
+    } [],
+  created_at: string,
+  updated_at: string
+}
+
+export interface CreateCallParams extends AuthenticationParams {
+  called_at: string,
+  caller_phone_number: string,
+  call_for: {
+    id: number
+  },
+  message: string 
+  caller_name: string
+  client: {
+    id: number
+  }
+  lead: {
+    id: number
+  }
+  call_type?: string
+  resolved?: boolean
+}
 
 export interface CreateCallResponse {}
 
