@@ -1301,6 +1301,7 @@
         "packages/pieces/community/zuora/src/index.ts"
       ],
       "ee-embed-sdk": ["packages/ee/ui/embed-sdk/src/index.ts"],
+      "piece-shippo": ["packages/pieces/community/shippo/src/index.ts"],
       "server-worker": ["packages/server/worker/src/index.ts"],
       "ui-feature-forms": ["packages/ui/features-forms/src/index.ts"]
     },
