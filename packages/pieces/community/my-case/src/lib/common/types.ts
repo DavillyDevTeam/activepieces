@@ -1,6 +1,3 @@
-import { StringFormatOption } from "@sinclair/typebox";
-import { boolean, number, string } from "zod/v4";
-
 // Common Types
 export interface AuthenticationParams {
   access_token: string;
@@ -22,6 +19,35 @@ export interface Client {
   updated_at: string;
 }
 
+export interface GenericIdObject {
+  id: number;
+}
+
+interface Address {
+  address1: string;
+  address2?: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  country: string;
+}
+
+type FieldType =
+  | 'case'
+  | 'client'
+  | 'company'
+  | 'expense'
+  | 'time'
+  | 'time_and_expense';
+
+type ParentType =
+  | 'case'
+  | 'client'
+  | 'company'
+  | 'expense'
+  | 'time'
+  | 'time_and_expense';
+
 // API Parameters and Response Types
 export interface CreateCaseParams extends AuthenticationParams {
   name: string;
@@ -33,14 +59,12 @@ export interface CreateCaseParams extends AuthenticationParams {
   sol_date?: string;
   status?: 'opened' | 'closed';
   outstanding_balance?: number;
-  billing_contact?: {
-    id: number;
-  };
-  clients?: { id: number }[];
-  companies?: { id: number }[];
+  billing_contact?: GenericIdObject;
+  clients?: GenericIdObject[];
+  companies?: GenericIdObject[];
   staff?: { id: number; lead_lawyer: boolean; originating_lawyer: boolean }[];
   custom_field_values?: {
-    custom_field: { id: number };
+    custom_field: GenericIdObject;
     value: string | number;
   }[];
 }
@@ -57,12 +81,10 @@ export interface CreateCaseResponse {
   case_stage: string | null;
   status: 'opened' | 'closed';
   outstanding_balance: number;
-  billing_contact: {
-    id: number;
-  };
+  billing_contact: GenericIdObject;
   billing_type: '' | 'hourly' | 'contingency' | 'flat' | 'mixed' | 'pro_bono';
   clients: Client[];
-  companies: { id: number }[];
+  companies: GenericIdObject[];
   staff: {
     id: number;
     lead_lawyer: boolean;
@@ -80,14 +102,7 @@ export interface CreateCaseResponse {
     name: string;
     fax_phone: string;
     main_phone: string;
-    address: {
-      address1: string;
-      address2: string;
-      city: string;
-      state: string;
-      zip_code: string;
-      country: string;
-    };
+    address: Address;
     created_at: string;
     updated_at: string;
   };
@@ -112,25 +127,12 @@ export interface CreateCompanyParams extends AuthenticationParams {
   website?: string;
   main_phone_number?: string;
   fax_phone_number?: string;
-  address?: {
-    address1?: string;
-    address2?: string;
-    city?: string;
-    state?: string;
-    zip_code?: string;
-    country?: string;
-  };
+  address?: Address;
   notes?: string;
-  cases?: {
-    id?: number;
-  }[];
-  clients?: {
-    id?: number;
-  }[];
+  cases?: GenericIdObject[];
+  clients?: GenericIdObject[];
   custom_field_values?: {
-    custom_field: {
-      id: number;
-    };
+    custom_field: GenericIdObject;
     value: string;
   }[];
 }
@@ -142,25 +144,14 @@ export interface CreateCompanyResponse {
   website: string;
   main_phone_number: string;
   fax_phone_number: string;
-  address: {
-    address1: string;
-    address2: string;
-    city: string;
-    state: string;
-    zip_code: string;
-    country: string;
-  };
+  address: Address;
   notes: string;
-  cases: {
-    id: number;
-  }[];
-  clients: {
-    id: number;
-  }[];
+  cases: GenericIdObject[];
+  clients: GenericIdObject[];
   custom_field_values: {
     custom_field: {
       id: number;
-      field_type: string;
+      field_type: FieldType;
     };
     value: string;
     created_at: string;
@@ -171,76 +162,107 @@ export interface CreateCompanyResponse {
   updated_at: string;
 }
 
-// TODO: Conferir daqui para baixo 
 export interface CreateCustomFieldParams extends AuthenticationParams {
   name: string;
-  parent_type: string;
-  field_type: string;
+  parent_type: ParentType;
+  field_type: FieldType;
   list_options: {
     option_value: string;
   }[];
 }
 
 export interface CreateCustomFieldResponse {
-  id: number,
-  name: string,
-  parent_type: string,
-  field_type: string,
+  id: number;
+  name: string;
+  parent_type: ParentType;
+  field_type: FieldType;
   list_options: {
-      key: string,
-      option: string,
-      created_at: string,
-      updated_at: string
-    }[],
-  created_at: string,
-  updated_at: string
+    key: string;
+    option: string;
+    created_at: string;
+    updated_at: string;
+  }[];
+  created_at: string;
+  updated_at: string;
 }
 
-// TODO: documents
-export interface CreateDocumentParams extends AuthenticationParams {}
+export interface CreateCaseDocumentParams extends AuthenticationParams {
+  caseId: string;
+  path: string;
+  filename: string;
+  description?: string;
+  assigned_date?: string;
+}
 
-export interface CreateDocumentResponse {}
+export interface CreateCaseDocumentResponse {
+  id: number;
+  name: string;
+  filename: string;
+  path: string;
+  description: string;
+  assigned_date: string;
+  case: GenericIdObject;
+  created_at: string;
+  updated_at: string;
+  self_url: string;
+  folder: GenericIdObject;
+  put_url: string;
+  put_headers: Record<string, string>;
+}
+
+export interface CreateFirmDocumentParams extends AuthenticationParams {
+  path: string;
+  filename: string;
+  description?: string;
+  assigned_date?: string;
+  staff?: GenericIdObject[];
+}
+
+export interface CreateFirmDocumentResponse {
+  id: number;
+  name: string;
+  filename: string;
+  path: string;
+  description: string;
+  assigned_date: string;
+  case: GenericIdObject;
+  created_at: string;
+  updated_at: string;
+  self_url: string;
+  folder: GenericIdObject;
+  put_url: string;
+  put_headers: Record<string, string>;
+}
 
 export interface CreateEventParams extends AuthenticationParams {
-  name: string,
-  description?: string,
-  start: string,
-  end: string,
-  all_day?: boolean,
-  private?: boolean,
-  location?: {   
-    id: number
-  }
-  case?: {
-    id: number
-  }
+  name: string;
+  description?: string;
+  start: string;
+  end: string;
+  all_day?: boolean;
+  private?: boolean;
+  location?: GenericIdObject;
+  case?: GenericIdObject;
   staff: {
-    id: number
-    required: boolean
-  }
+    id: number;
+    required: boolean;
+  };
 }
 
 export interface CreateEventResponse {
-  id: number,
-  name: string,
-  description: string,
-  start: string,
-  end: string,
-  all_day: boolean,
-  private: boolean,
-  event_type: string,
-  location: {
-    id: number
-  },
-  case: {
-    id: number
-  },
-  staff: 
-    {
-      id: number
-    }[],
-  created_at: string,
-  updated_at: string
+  id: number;
+  name: string;
+  description: string;
+  start: string;
+  end: string;
+  all_day: boolean;
+  private: boolean;
+  event_type: string;
+  location: GenericIdObject;
+  case: GenericIdObject;
+  staff: GenericIdObject[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateExpenseParams extends AuthenticationParams {
@@ -250,59 +272,40 @@ export interface CreateExpenseParams extends AuthenticationParams {
   entry_date: string;
   cost: number;
   units: number;
-  case: {
-    id: number;
-  }
-  staff: {
-    id: number;
-  }
+  case: GenericIdObject;
+  staff: GenericIdObject;
 }
 
 export interface CreateExpenseResponse {
-  id: number,
-  activity_name: string,
-  description: string,
-  billable: boolean
-  entry_date: string,
-  cost: string,
-  units: string,
-  case: {
-    id: number
-  },
-  staff: {
-    id: number
-  },
-  invoices: 
-    {
-      id: number
-    }[],
-  custom_field_values: 
-    {
-      custom_field: {
-        id: number
-        field_type: string
-      },
-      value: string,
-      created_at: string,
-      updated_at: string
-    }[],
-  created_at: string,
-  updated_at: string
+  id: number;
+  activity_name: string;
+  description: string;
+  billable: boolean;
+  entry_date: string;
+  cost: string;
+  units: string;
+  case: GenericIdObject;
+  staff: GenericIdObject;
+  invoices: GenericIdObject[];
+  custom_field_values: {
+    custom_field: {
+      id: number;
+      field_type: string;
+    };
+    value: string;
+    created_at: string;
+    updated_at: string;
+  }[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateLeadParams extends AuthenticationParams {
   email?: string;
   first_name: string;
-  middle_initial?: string,
+  middle_initial?: string;
   last_name: string;
-  address?: {
-    address1?: string;
-    address2?: string;
-    city?: string;
-    state?: string;
-    zip_code?: string;
-    country?: string;
-  }
+  address?: Address;
   cell_phone_number?: string;
   work_phone_number?: string;
   home_phone_number?: string;
@@ -310,166 +313,128 @@ export interface CreateLeadParams extends AuthenticationParams {
   birthdate?: string;
   drivers_license_number?: string;
   drivers_license_state?: string;
-  referral_source_reference?: {
-    id?: number;
-  }
+  referral_source_reference?: GenericIdObject;
+  referred_by?: GenericIdObject;
   custom_field_values?: {
-    custom_field: {
-      id?: number;
-    }
+    custom_field: GenericIdObject;
     value: string | number | boolean;
-    }[];
+  }[];
 }
 
 export interface CreateLeadResponse {
-  id: number,
-  email: string,
-  first_name: string,
-  middle_initial: string,
-  last_name: string,
-  address: {
-    address1: string,
-    address2: string,
-    city: string,
-    state: string,
-    zip_code: string,
-    country: string
-  },
-  cell_phone_number: string,
-  work_phone_number: string,
-  home_phone_number: string,
-  lead_details: string,
-  birthdate: string,
-  drivers_license_number: string,
-  drivers_license_state: string,
-  status: string,
-  approved: boolean,
-  referral_source: string,
-  referral_source_reference: {
-    id: number
-  },
-  referred_by: {
-    id: number
-  },
-  custom_field_values: 
-    {
-      custom_field: {
-        id: number,
-        field_type: string
-      },
-      value: string | number | boolean,
-      created_at: string,
-      updated_at: string
-    }[],
-  updated_at: string,
-  created_at: string
+  id: number;
+  email: string;
+  first_name: string;
+  middle_initial: string;
+  last_name: string;
+  address: Address;
+  cell_phone_number: string;
+  work_phone_number: string;
+  home_phone_number: string;
+  lead_details: string;
+  birthdate: string;
+  drivers_license_number: string;
+  drivers_license_state: string;
+  status: string;
+  approved: boolean;
+  referral_source_reference: GenericIdObject;
+  referred_by: GenericIdObject;
+  custom_field_values: {
+    custom_field: {
+      id: number;
+      field_type: string;
+    };
+    value: string | number | boolean;
+    created_at: string;
+    updated_at: string;
+  }[];
+  updated_at: string;
+  created_at: string;
 }
 
 export interface CreateLocationParams extends AuthenticationParams {
   name: string;
-  address?: {
-    address1?: string;
-    address2?: string;
-    city?: string;
-    state?: string;
-    zip_code?: string;
-    country?: string;
-  }
+  address?: Address;
 }
 
 export interface CreateLocationResponse {
-    id: number,
-  name: string,
-  address: {
-    address1: string,
-    address2: string,
-    city: string,
-    state: string,
-    zip_code: string,
-    country: string
-  },
-  created_at: string,
-  updated_at: string
+  id: number;
+  name: string;
+  address: Address;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateNoteParams extends AuthenticationParams {
-  // Esse é complexo, pode deixar comigo
+  obj: 'case' | 'client' | 'company';
+  objId: string;
+  subject: string;
+  note: string;
+  date: string;
 }
 
-export interface CreateNoteResponse {}
+export interface CreateNoteResponse {
+  id: number;
+  subject: string;
+  note: string;
+  archived: boolean;
+  date: string;
+  client: GenericIdObject | null;
+  company: GenericIdObject | null;
+  case: GenericIdObject | null;
+  created_by: GenericIdObject;
+  updated_by: GenericIdObject;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface CreatePersonParams extends AuthenticationParams {
-  email?: string,
-  first_name: string,
-  middle_name?: string,
-  last_name: string,
-  address?: {
-    address1?: string,
-    address2?: string,
-    city?: string,
-    state?: string, 
-    zip_code?: string,
-    country?: string
-  }
-  cell_phone_number?: string,
-  work_phone_number?: string,
-  home_phone_number?: string,
-  fax_phone_number?: string,
-  birthdate?: string,
-  notes?: string,
-  people_group?: {
-    id?: number
-  }
-  cases?: {
-    id?: number
-  }
-  custom_field:{
-    id: number
-  }
-  value: string | number | boolean
+  email?: string;
+  first_name: string;
+  middle_name?: string;
+  last_name: string;
+  address?: Address;
+  cell_phone_number?: string;
+  work_phone_number?: string;
+  home_phone_number?: string;
+  fax_phone_number?: string;
+  birthdate?: string;
+  notes?: string;
+  people_group?: GenericIdObject;
+  cases?: GenericIdObject[];
+  custom_field_values?: {
+    custom_field: GenericIdObject;
+    value: string | number | boolean;
+  }[];
 }
 
 export interface CreatePersonResponse {
-    id: number,
-  email: string,
-  first_name: string,
-  middle_initial: string,
-  middle_name: string,
-  last_name: string,
-  address: {
-    address1: string,
-    address2: string,
-    city: string,
-    state: string,
-    zip_code: string,
-    country: string
-  },
-  cell_phone_number: string,
-  work_phone_number: string,
-  home_phone_number: string,
-  fax_phone_number: string,
-  people_group: {
-    id: number
-  },
-  notes: string,
-  birthdate: string,
-  archived: boolean,
-  cases: 
-    {
-      id: number
-    }[],
-  custom_field_values: 
-    {
-      custom_field: {
-        id: number,
-        field_type: string
-      },
-      value: string,
-      created_at: string,
-      updated_at: string
-    }[],
-  updated_at: string,
-  created_at: string
+  id: number;
+  email: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  address: Address;
+  cell_phone_number: string;
+  work_phone_number: string;
+  home_phone_number: string;
+  fax_phone_number: string;
+  people_group: GenericIdObject;
+  notes: string;
+  birthdate: string;
+  archived: boolean;
+  cases: GenericIdObject[];
+  custom_field_values: {
+    custom_field: {
+      id: number;
+      field_type: string;
+    };
+    value: string;
+    created_at: string;
+    updated_at: string;
+  }[];
+  updated_at: string;
+  created_at: string;
 }
 
 export interface CreatePracticeAreaParams extends AuthenticationParams {
@@ -477,156 +442,113 @@ export interface CreatePracticeAreaParams extends AuthenticationParams {
 }
 
 export interface CreatePracticeAreaResponse {
-  id: number,
-  name: string,
-  created_at: string,
-  updated_at:string
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateReferralSourceParams extends AuthenticationParams {
-  name: string
+  name: string;
 }
 
 export interface CreateReferralSourceResponse {
-  id: number,
-  name: string,
-  created_at: string,
-  updated_at: string
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateTaskParams extends AuthenticationParams {
-  name: string,
-  description?: string,
-  priority: string,
-  due_date: string,
-  completed?: boolean,
-  case?: {
-    id?: number
-  },
-  staff: {
-    id: number
-  }
+  name: string;
+  description?: string;
+  priority: string;
+  due_date: string;
+  completed?: boolean;
+  case?: GenericIdObject;
+  staff: GenericIdObject[];
 }
 
 export interface CreateTaskResponse {
-  id: number,
-  name: string,
-  description: string,
-  priority: string,
-  due_date: string,
-  completed: boolean,
-  case: {
-    id: number
-  },
-  staff: {
-    id: number
-  },
-  created_at: string,
-  updated_at: string,
-  completed_at: string
+  id: number;
+  name: string;
+  description: string;
+  priority: string;
+  due_date: string;
+  completed: boolean;
+  case: GenericIdObject;
+  staff: GenericIdObject[];
+  created_at: string;
+  updated_at: string;
+  completed_at: string;
 }
 
 export interface CreateTimeEntryParams extends AuthenticationParams {
-  activity_name: string,
-  description?: string,
-  billable?: boolean,
-  entry_date: string,
-  rate: number,
-  hours: number,
-  flat_fee?: boolean,
-  case: {
-    id: number
-  },
-  staff: {
-    id: number
-  }
+  activity_name: string;
+  description?: string;
+  billable?: boolean;
+  entry_date: string;
+  rate: number;
+  hours: number;
+  flat_fee?: boolean;
+  case: GenericIdObject;
+  staff: GenericIdObject;
 }
 
 export interface CreateTimeEntryResponse {
-    id: number,
-  activity_name: string,
-  description: string,
-  billable: boolean,
-  entry_date: string,
-  rate: string,
-  hours: number,
-  flat_fee: boolean,
-  case: {
-    id: number
-  },
-  staff: {
-    id: number
-  },
-  invoices: [
-    {
-      id: number
-    }
-  ],
-  custom_field_values: 
-    {
-      custom_field: {
-        id: number,
-        field_type: string
-      },
-      value: string,
-      created_at: string,
-      updated_at: string
-    } [],
-  created_at: string,
-  updated_at: string
+  id: number;
+  activity_name: string;
+  description: string;
+  billable: boolean;
+  entry_date: string;
+  rate: string;
+  hours: number;
+  flat_fee: boolean;
+  case: GenericIdObject;
+  staff: GenericIdObject;
+  invoices: GenericIdObject[];
+  custom_field_values: {
+    custom_field: {
+      id: number;
+      field_type: string;
+    };
+    value: string;
+    created_at: string;
+    updated_at: string;
+  }[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateCallParams extends AuthenticationParams {
-  called_at: string,
-  caller_phone_number: string,
-  call_for: {
-    id: number
-  },
-  message: string 
-  caller_name: string
-  client: {
-    id: number
-  }
-  lead: {
-    id: number
-  }
-  call_type?: string
-  resolved?: boolean
+  called_at: string;
+  caller_phone_number: string;
+  call_for: GenericIdObject;
+  message: string;
+  caller_name: string;
+  client: GenericIdObject;
+  lead: GenericIdObject;
+  call_type?: string;
+  resolved?: boolean;
 }
 
-export interface CreateCallResponse {}
-
-export interface UpdateCaseParams extends AuthenticationParams {
+export interface UpdateCaseParams extends CreateCaseParams {
   id: string;
 }
 
-export interface UpdateCaseResponse {}
-
-export interface UpdateCompanyParams extends AuthenticationParams {
+export interface UpdateCompanyParams extends CreateCompanyParams {
   id: string;
 }
 
-export interface UpdateCompanyResponse {}
-
-export interface UpdatePersonParams extends AuthenticationParams {
+export interface UpdatePersonParams extends CreatePersonParams {
   id: string;
 }
 
-export interface UpdatePersonResponse {}
+export type ListCasesParams = AuthenticationParams;
 
-export interface ListCasesParams extends AuthenticationParams {}
+export type ListCasesResponse = CreateCaseResponse[];
 
-export interface ListCasesResponse {}
-
-export interface ListCallersParams extends AuthenticationParams {}
-
-  // Pular por enquanto, ver qual é esse
-
-export interface ListCallersResponse {}
-
-  // Pular por enquanto, ver qual é esse
-
-export interface ListCaseStagesParams extends AuthenticationParams {}
+export type ListCallersParams = AuthenticationParams;
 
 export interface ListCaseStagesResponse {}
 
@@ -634,29 +556,28 @@ export interface ListCompanyContactsParams extends AuthenticationParams {
   companyId: string;
 }
 
-  
 export interface ListCompanyContactsResponse {}
 
-export interface ListLocationsParams extends AuthenticationParams {}
+export type ListLocationsParams = AuthenticationParams;
 
 export interface ListLocationsResponse {}
 
-export interface ListPeopleGroupsParams extends AuthenticationParams {}
+export type ListPeopleGroupsParams = AuthenticationParams;
 
 export interface ListPeopleGroupsResponse {}
 
-export interface ListPersonContactsParams extends AuthenticationParams {}
+export type ListPersonContactsParams = AuthenticationParams;
 
 export interface ListPersonContactsResponse {}
 
-export interface ListPracticeAreasParams extends AuthenticationParams {}
+export type ListPracticeAreasParams = AuthenticationParams;
 
 export interface ListPracticeAreasResponse {}
 
-export interface ListReferralSourcesParams extends AuthenticationParams {}
+export type ListReferralSourcesParams = AuthenticationParams;
 
 export interface ListReferralSourcesResponse {}
 
-export interface ListStaffParams extends AuthenticationParams {}
+export type ListStaffParams = AuthenticationParams;
 
 export interface ListStaffResponse {}

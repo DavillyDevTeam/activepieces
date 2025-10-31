@@ -3,7 +3,7 @@ import { PieceAuth } from '@activepieces/pieces-framework';
 import { OAuth2GrantType } from '@activepieces/shared';
 import {
   CreateCallParams,
-  CreateCallResponse,
+  CreateCaseDocumentParams,
   CreateCaseParams,
   CreateCaseResponse,
   CreateCaseStageParams,
@@ -12,17 +12,18 @@ import {
   CreateCompanyResponse,
   CreateCustomFieldParams,
   CreateCustomFieldResponse,
-  CreateDocumentParams,
-  CreateDocumentResponse,
   CreateEventParams,
   CreateEventResponse,
   CreateExpenseParams,
   CreateExpenseResponse,
+  CreateFirmDocumentParams,
+  CreateFirmDocumentResponse,
   CreateLeadParams,
   CreateLeadResponse,
   CreateLocationParams,
   CreateLocationResponse,
   CreateNoteParams,
+  CreateNoteResponse,
   CreatePersonParams,
   CreatePersonResponse,
   CreatePracticeAreaParams,
@@ -33,7 +34,6 @@ import {
   CreateTaskResponse,
   CreateTimeEntryParams,
   CreateTimeEntryResponse,
-  ListCallersParams,
   ListCasesParams,
   ListCasesResponse,
   ListCaseStagesParams,
@@ -53,11 +53,8 @@ import {
   ListStaffParams,
   ListStaffResponse,
   UpdateCaseParams,
-  UpdateCaseResponse,
   UpdateCompanyParams,
-  UpdateCompanyResponse,
-  UpdatePersonParams,
-  UpdatePersonResponse
+  UpdatePersonParams
 } from './types';
 
 export const myCaseAuth = PieceAuth.OAuth2({
@@ -78,7 +75,20 @@ export const myCaseApi = {
     companies: '/companies',
     companyDetail: (id: string) => `/companies/${id}`,
     customFields: '/custom_fields',
-    documents: '/documents', // TODO: may need to handle file uploads differently
+    createCaseDocuments: (caseId: string) => `/cases/${caseId}/documents`,
+    documents: '/documents',
+    createNote: ({obj, objId}: {obj: string; objId: string}) => {
+      switch (obj) {
+        case 'case':
+          return `/cases/${objId}/notes`;
+        case 'client':
+          return `/clients/${objId}/notes`;
+        case 'company':
+          return `/companies/${objId}/notes`;
+        default:
+          throw new Error(`Unsupported object type for notes: ${obj}`);
+      }
+    },
     events: '/events',
     expenses: '/expenses',
     leads: '/leads',
@@ -144,14 +154,26 @@ export const myCaseApi = {
     });
     return response.body;
   },
-  createDocument: async ({
+  createFirmDocument: async ({
     access_token,
     ...documentParams
-  }: CreateDocumentParams) => {
-    // TODO: Implement multiple cases
-    const response = await httpClient.sendRequest<CreateDocumentResponse>({
+  }: CreateFirmDocumentParams) => {
+    const response = await httpClient.sendRequest<CreateFirmDocumentResponse>({
       method: HttpMethod.POST,
       url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.documents}`,
+      headers: myCaseApi.getAuthHeader(access_token),
+      body: documentParams,
+    });
+    return response.body;
+  },
+  createCaseDocument: async ({
+    access_token,
+    caseId,
+    ...documentParams
+  }: CreateCaseDocumentParams) => {
+    const response = await httpClient.sendRequest<CreateFirmDocumentResponse>({
+      method: HttpMethod.POST,
+      url: myCaseApi.baseUrl + myCaseApi.endpoints.createCaseDocuments(caseId),
       headers: myCaseApi.getAuthHeader(access_token),
       body: documentParams,
     });
@@ -199,15 +221,14 @@ export const myCaseApi = {
     });
     return response.body;
   },
-  createNote: async ({ access_token, ...noteParams }: CreateNoteParams) => {
-    // TODO: Implement createNote function (multiple types of notes may exist)
-    // const response = await httpClient.sendRequest<CreateNoteResponse>({
-    //   method: HttpMethod.POST,
-    //   url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.notes}`,
-    //   headers: myCaseApi.getAuthHeader(access_token),
-    //   body: noteParams,
-    // });
-    // return response.body;
+  createNote: async ({ access_token, obj, objId, ...noteParams }: CreateNoteParams) => {
+    const response = await httpClient.sendRequest<CreateNoteResponse>({
+      method: HttpMethod.POST,
+      url: myCaseApi.baseUrl + myCaseApi.endpoints.createNote({obj, objId}),
+      headers: myCaseApi.getAuthHeader(access_token),
+      body: noteParams,
+    });
+    return response.body;
   },
   createPerson: async ({
     access_token,
@@ -269,52 +290,48 @@ export const myCaseApi = {
     return response.body;
   },
   createCall: async ({ access_token, ...callParams }: CreateCallParams) => {
-    const response = await httpClient.sendRequest<CreateCallResponse>({
+    await httpClient.sendRequest<null>({
       method: HttpMethod.POST,
       url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.calls}`,
       headers: myCaseApi.getAuthHeader(access_token),
       body: callParams,
     });
-    return response.body;
+    return 'success';
   },
   updateCase: async ({ access_token, ...caseParams }: UpdateCaseParams) => {
-    const response = await httpClient.sendRequest<UpdateCaseResponse>({
+    await httpClient.sendRequest<null>({
       method: HttpMethod.PUT,
-      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.updateCase(
-        caseParams.id
-      )}`,
+      url: myCaseApi.baseUrl + myCaseApi.endpoints.updateCase(caseParams.id),
       headers: myCaseApi.getAuthHeader(access_token),
       body: caseParams,
     });
-    return response.body;
+    return "success";
   },
   updateCompany: async ({
     access_token,
     ...companyParams
   }: UpdateCompanyParams) => {
-    const response = await httpClient.sendRequest<UpdateCompanyResponse>({
+    await httpClient.sendRequest<null>({
       method: HttpMethod.PUT,
-      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.companyDetail(
-        companyParams.id
-      )}`,
+      url:
+        myCaseApi.baseUrl + myCaseApi.endpoints.companyDetail(companyParams.id),
       headers: myCaseApi.getAuthHeader(access_token),
       body: companyParams,
     });
-    return response.body;
+    return "success";
   },
   updatePerson: async ({
     access_token,
     ...personParams
   }: UpdatePersonParams) => {
-    const response = await httpClient.sendRequest<UpdatePersonResponse>({
+    await httpClient.sendRequest<null>({
       method: HttpMethod.PUT,
-      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.updatePerson(
-        personParams.id
-      )}`,
+      url:
+        myCaseApi.baseUrl + myCaseApi.endpoints.updatePerson(personParams.id),
       headers: myCaseApi.getAuthHeader(access_token),
       body: personParams,
     });
-    return response.body;
+    return "success";
   },
   listCases: async ({ access_token }: ListCasesParams) => {
     const response = await httpClient.sendRequest<ListCasesResponse>({
@@ -324,9 +341,6 @@ export const myCaseApi = {
     });
     return response.body;
   },
-  listCallers: async ({ access_token }: ListCallersParams) => {
-    // TODO: Ver como implementar isso
-  },
   listCaseStages: async ({ access_token }: ListCaseStagesParams) => {
     const response = await httpClient.sendRequest<ListCaseStagesResponse>({
       method: HttpMethod.GET,
@@ -335,10 +349,15 @@ export const myCaseApi = {
     });
     return response.body;
   },
-  listCompanyContacts: async ({ access_token, companyId }: ListCompanyContactsParams) => {
+  listCompanyContacts: async ({
+    access_token,
+    companyId,
+  }: ListCompanyContactsParams) => {
     const response = await httpClient.sendRequest<ListCompanyContactsResponse>({
       method: HttpMethod.GET,
-      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.companyDetail(companyId)}`,
+      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.companyDetail(
+        companyId
+      )}`,
       headers: myCaseApi.getAuthHeader(access_token),
     });
     return response.body;
