@@ -23,6 +23,13 @@ export interface GenericIdObject {
   id: number;
 }
 
+export interface GenericNamedObject {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
 interface Address {
   address1: string;
   address2?: string;
@@ -47,6 +54,86 @@ type ParentType =
   | 'expense'
   | 'time'
   | 'time_and_expense';
+
+export type APICaseStage = GenericNamedObject;
+
+export interface APICompany extends GenericNamedObject {
+  email: string;
+  website: string;
+  main_phone_number: string;
+  fax_phone_number: string;
+  address: Address;
+  notes: string;
+  cases: GenericIdObject[];
+  clients: GenericIdObject[];
+  custom_field_values: {
+    custom_field: {
+      id: number;
+      field_type: FieldType;
+    };
+    value: string;
+    created_at: string;
+    updated_at: string;
+  }[];
+  archived: boolean;
+}
+
+export interface APILocation extends GenericNamedObject {
+  address: Address;
+}
+
+export type APIPeopleGroup = GenericNamedObject
+
+export interface APIPerson {
+  id: number;
+  email: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  address: Address;
+  cell_phone_number: string;
+  work_phone_number: string;
+  home_phone_number: string;
+  fax_phone_number: string;
+  people_group: GenericIdObject;
+  notes: string;
+  birthdate: string;
+  archived: boolean;
+  cases: GenericIdObject[];
+  custom_field_values: {
+    custom_field: {
+      id: number;
+      field_type: string;
+    };
+    value: string;
+    created_at: string;
+    updated_at: string;
+  }[];
+  updated_at: string;
+  created_at: string;
+}
+
+export type APIPracticeArea = GenericNamedObject
+
+export type APIReferralSource = GenericNamedObject
+
+export interface APIStaff {
+  id: number;
+  email: string;
+  first_name: string;
+  middle_initial: string;
+  last_name: string;
+  address: Address;
+  cell_phone_number: string;
+  work_phone_number: string;
+  home_phone_number: string;
+  type: string;
+  title: string;
+  active: boolean;
+  default_hourly_rate: number;
+  updated_at: string;
+  created_at: string;
+}
 
 // API Parameters and Response Types
 export interface CreateCaseParams extends AuthenticationParams {
@@ -114,12 +201,7 @@ export interface CreateCaseStageParams extends AuthenticationParams {
   name: string;
 }
 
-export interface CreateCaseStageResponse {
-  id: number;
-  name: string;
-  created_at: string;
-  updated_at: string;
-}
+export type CreateCaseStageResponse = APICaseStage;
 
 export interface CreateCompanyParams extends AuthenticationParams {
   name: string;
@@ -137,30 +219,7 @@ export interface CreateCompanyParams extends AuthenticationParams {
   }[];
 }
 
-export interface CreateCompanyResponse {
-  id: number;
-  name: string;
-  email: string;
-  website: string;
-  main_phone_number: string;
-  fax_phone_number: string;
-  address: Address;
-  notes: string;
-  cases: GenericIdObject[];
-  clients: GenericIdObject[];
-  custom_field_values: {
-    custom_field: {
-      id: number;
-      field_type: FieldType;
-    };
-    value: string;
-    created_at: string;
-    updated_at: string;
-  }[];
-  archived: boolean;
-  created_at: string;
-  updated_at: string;
-}
+export type CreateCompanyResponse = APICompany;
 
 export interface CreateCustomFieldParams extends AuthenticationParams {
   name: string;
@@ -357,13 +416,7 @@ export interface CreateLocationParams extends AuthenticationParams {
   address?: Address;
 }
 
-export interface CreateLocationResponse {
-  id: number;
-  name: string;
-  address: Address;
-  created_at: string;
-  updated_at: string;
-}
+export type CreateLocationResponse = APILocation;
 
 export interface CreateNoteParams extends AuthenticationParams {
   obj: 'case' | 'client' | 'company';
@@ -408,56 +461,19 @@ export interface CreatePersonParams extends AuthenticationParams {
   }[];
 }
 
-export interface CreatePersonResponse {
-  id: number;
-  email: string;
-  first_name: string;
-  middle_name: string;
-  last_name: string;
-  address: Address;
-  cell_phone_number: string;
-  work_phone_number: string;
-  home_phone_number: string;
-  fax_phone_number: string;
-  people_group: GenericIdObject;
-  notes: string;
-  birthdate: string;
-  archived: boolean;
-  cases: GenericIdObject[];
-  custom_field_values: {
-    custom_field: {
-      id: number;
-      field_type: string;
-    };
-    value: string;
-    created_at: string;
-    updated_at: string;
-  }[];
-  updated_at: string;
-  created_at: string;
-}
+export type CreatePersonResponse = APIPerson;
 
 export interface CreatePracticeAreaParams extends AuthenticationParams {
   name: string;
 }
 
-export interface CreatePracticeAreaResponse {
-  id: number;
-  name: string;
-  created_at: string;
-  updated_at: string;
-}
+export type CreatePracticeAreaResponse = APIPracticeArea;
 
 export interface CreateReferralSourceParams extends AuthenticationParams {
   name: string;
 }
 
-export interface CreateReferralSourceResponse {
-  id: number;
-  name: string;
-  created_at: string;
-  updated_at: string;
-}
+export type CreateReferralSourceResponse = APIReferralSource;
 
 export interface CreateTaskParams extends AuthenticationParams {
   name: string;
@@ -550,34 +566,34 @@ export type ListCasesResponse = CreateCaseResponse[];
 
 export type ListCallersParams = AuthenticationParams;
 
-export interface ListCaseStagesResponse {}
+export type ListCaseStagesResponse = APICaseStage[];
 
 export interface ListCompanyContactsParams extends AuthenticationParams {
   companyId: string;
 }
 
-export interface ListCompanyContactsResponse {}
+export type ListCompanyContactsResponse = APICompany[];
 
 export type ListLocationsParams = AuthenticationParams;
 
-export interface ListLocationsResponse {}
+export type ListLocationsResponse = APILocation[];
 
 export type ListPeopleGroupsParams = AuthenticationParams;
 
-export interface ListPeopleGroupsResponse {}
+export type ListPeopleGroupsResponse = APIPeopleGroup[];
 
 export type ListPersonContactsParams = AuthenticationParams;
 
-export interface ListPersonContactsResponse {}
+export type ListPersonContactsResponse = APIPerson[];
 
 export type ListPracticeAreasParams = AuthenticationParams;
 
-export interface ListPracticeAreasResponse {}
+export type ListPracticeAreasResponse = APIPracticeArea[];
 
 export type ListReferralSourcesParams = AuthenticationParams;
 
-export interface ListReferralSourcesResponse {}
+export type ListReferralSourcesResponse = APIReferralSource[];
 
 export type ListStaffParams = AuthenticationParams;
 
-export interface ListStaffResponse {}
+export type ListStaffResponse = APIStaff[];

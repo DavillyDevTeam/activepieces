@@ -2,6 +2,7 @@ import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { PieceAuth } from '@activepieces/pieces-framework';
 import { OAuth2GrantType } from '@activepieces/shared';
 import {
+  AuthenticationParams,
   CreateCallParams,
   CreateCaseDocumentParams,
   CreateCaseParams,
@@ -36,7 +37,6 @@ import {
   CreateTimeEntryResponse,
   ListCasesParams,
   ListCasesResponse,
-  ListCaseStagesParams,
   ListCaseStagesResponse,
   ListCompanyContactsParams,
   ListCompanyContactsResponse,
@@ -101,7 +101,6 @@ export const myCaseApi = {
     timeEntries: '/time_entries',
     calls: '/calls',
     peopleGroups: '/people_groups',
-    personContacts: '', // TODO: Maybe doesn't exist
     staff: '/staff',
   },
   getAuthHeader: (access_token: string) => {
@@ -341,7 +340,7 @@ export const myCaseApi = {
     });
     return response.body;
   },
-  listCaseStages: async ({ access_token }: ListCaseStagesParams) => {
+  listCaseStages: async ({ access_token }: AuthenticationParams) => {
     const response = await httpClient.sendRequest<ListCaseStagesResponse>({
       method: HttpMethod.GET,
       url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.caseStages}`,
@@ -381,7 +380,7 @@ export const myCaseApi = {
   listPersonContacts: async ({ access_token }: ListPersonContactsParams) => {
     const response = await httpClient.sendRequest<ListPersonContactsResponse>({
       method: HttpMethod.GET,
-      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.personContacts}`,
+      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.people}`,
       headers: myCaseApi.getAuthHeader(access_token),
     });
     return response.body;
