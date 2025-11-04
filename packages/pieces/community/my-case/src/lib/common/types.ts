@@ -82,7 +82,7 @@ export interface APILocation extends GenericNamedObject {
   address: Address;
 }
 
-export type APIPeopleGroup = GenericNamedObject
+export type APIPeopleGroup = GenericNamedObject;
 
 export interface APIPerson {
   id: number;
@@ -113,9 +113,9 @@ export interface APIPerson {
   created_at: string;
 }
 
-export type APIPracticeArea = GenericNamedObject
+export type APIPracticeArea = GenericNamedObject;
 
-export type APIReferralSource = GenericNamedObject
+export type APIReferralSource = GenericNamedObject;
 
 export interface APIStaff {
   id: number;
@@ -131,6 +131,37 @@ export interface APIStaff {
   title: string;
   active: boolean;
   default_hourly_rate: number;
+  updated_at: string;
+  created_at: string;
+}
+
+export interface APILead {
+  id: number;
+  email: string;
+  first_name: string;
+  middle_initial: string;
+  last_name: string;
+  address: Address;
+  cell_phone_number: string;
+  work_phone_number: string;
+  home_phone_number: string;
+  lead_details: string;
+  birthdate: string;
+  drivers_license_number: string;
+  drivers_license_state: string;
+  status: string;
+  approved: boolean;
+  referral_source_reference: GenericIdObject;
+  referred_by: GenericIdObject;
+  custom_field_values: {
+    custom_field: {
+      id: number;
+      field_type: string;
+    };
+    value: string | number | boolean;
+    created_at: string;
+    updated_at: string;
+  }[];
   updated_at: string;
   created_at: string;
 }
@@ -380,36 +411,7 @@ export interface CreateLeadParams extends AuthenticationParams {
   }[];
 }
 
-export interface CreateLeadResponse {
-  id: number;
-  email: string;
-  first_name: string;
-  middle_initial: string;
-  last_name: string;
-  address: Address;
-  cell_phone_number: string;
-  work_phone_number: string;
-  home_phone_number: string;
-  lead_details: string;
-  birthdate: string;
-  drivers_license_number: string;
-  drivers_license_state: string;
-  status: string;
-  approved: boolean;
-  referral_source_reference: GenericIdObject;
-  referred_by: GenericIdObject;
-  custom_field_values: {
-    custom_field: {
-      id: number;
-      field_type: string;
-    };
-    value: string | number | boolean;
-    created_at: string;
-    updated_at: string;
-  }[];
-  updated_at: string;
-  created_at: string;
-}
+export type CreateLeadResponse = APILead
 
 export interface CreateLocationParams extends AuthenticationParams {
   name: string;
@@ -544,7 +546,7 @@ export interface CreateCallParams extends AuthenticationParams {
   caller_name: string;
   client: GenericIdObject;
   lead: GenericIdObject;
-  call_type?: string;
+  call_type?: 'incoming' | 'outgoing'; // "incoming" is the default if not provided
   resolved?: boolean;
 }
 
@@ -597,3 +599,5 @@ export type ListReferralSourcesResponse = APIReferralSource[];
 export type ListStaffParams = AuthenticationParams;
 
 export type ListStaffResponse = APIStaff[];
+
+export type ListLeadResponse = APILead[];

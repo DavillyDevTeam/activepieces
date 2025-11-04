@@ -40,6 +40,7 @@ import {
   ListCaseStagesResponse,
   ListCompanyContactsParams,
   ListCompanyContactsResponse,
+  ListLeadResponse,
   ListLocationsParams,
   ListLocationsResponse,
   ListPeopleGroupsParams,
@@ -409,4 +410,12 @@ export const myCaseApi = {
     });
     return response.body;
   },
+  listLeads: async ({ access_token }: AuthenticationParams) => {
+    const response = await httpClient.sendRequest<ListLeadResponse>({
+      method: HttpMethod.GET,
+      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.leads}`,
+      headers: myCaseApi.getAuthHeader(access_token),
+    });
+    return response.body;
+  }
 };
