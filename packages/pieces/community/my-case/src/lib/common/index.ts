@@ -40,6 +40,7 @@ import {
   ListCaseStagesResponse,
   ListCompanyContactsParams,
   ListCompanyContactsResponse,
+  ListCustomFieldsResponse,
   ListLeadResponse,
   ListLocationsParams,
   ListLocationsResponse,
@@ -55,7 +56,7 @@ import {
   ListStaffResponse,
   UpdateCaseParams,
   UpdateCompanyParams,
-  UpdatePersonParams
+  UpdatePersonParams,
 } from './types';
 
 export const myCaseAuth = PieceAuth.OAuth2({
@@ -78,7 +79,7 @@ export const myCaseApi = {
     customFields: '/custom_fields',
     createCaseDocuments: (caseId: string) => `/cases/${caseId}/documents`,
     documents: '/documents',
-    createNote: ({obj, objId}: {obj: string; objId: string}) => {
+    createNote: ({ obj, objId }: { obj: string; objId: string }) => {
       switch (obj) {
         case 'case':
           return `/cases/${objId}/notes`;
@@ -221,10 +222,15 @@ export const myCaseApi = {
     });
     return response.body;
   },
-  createNote: async ({ access_token, obj, objId, ...noteParams }: CreateNoteParams) => {
+  createNote: async ({
+    access_token,
+    obj,
+    objId,
+    ...noteParams
+  }: CreateNoteParams) => {
     const response = await httpClient.sendRequest<CreateNoteResponse>({
       method: HttpMethod.POST,
-      url: myCaseApi.baseUrl + myCaseApi.endpoints.createNote({obj, objId}),
+      url: myCaseApi.baseUrl + myCaseApi.endpoints.createNote({ obj, objId }),
       headers: myCaseApi.getAuthHeader(access_token),
       body: noteParams,
     });
@@ -305,7 +311,7 @@ export const myCaseApi = {
       headers: myCaseApi.getAuthHeader(access_token),
       body: caseParams,
     });
-    return "success";
+    return 'success';
   },
   updateCompany: async ({
     access_token,
@@ -318,7 +324,7 @@ export const myCaseApi = {
       headers: myCaseApi.getAuthHeader(access_token),
       body: companyParams,
     });
-    return "success";
+    return 'success';
   },
   updatePerson: async ({
     access_token,
@@ -331,7 +337,7 @@ export const myCaseApi = {
       headers: myCaseApi.getAuthHeader(access_token),
       body: personParams,
     });
-    return "success";
+    return 'success';
   },
   listCases: async ({ access_token }: ListCasesParams) => {
     const response = await httpClient.sendRequest<ListCasesResponse>({
@@ -345,6 +351,14 @@ export const myCaseApi = {
     const response = await httpClient.sendRequest<ListCaseStagesResponse>({
       method: HttpMethod.GET,
       url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.caseStages}`,
+      headers: myCaseApi.getAuthHeader(access_token),
+    });
+    return response.body;
+  },
+  listCompanies: async ({ access_token }: AuthenticationParams) => {
+    const response = await httpClient.sendRequest<ListCasesResponse>({
+      method: HttpMethod.GET,
+      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.companies}`,
       headers: myCaseApi.getAuthHeader(access_token),
     });
     return response.body;
@@ -417,5 +431,23 @@ export const myCaseApi = {
       headers: myCaseApi.getAuthHeader(access_token),
     });
     return response.body;
-  }
+  },
+  listCustomFields: async ({ access_token }: AuthenticationParams) => {
+    const response = await httpClient.sendRequest<ListCustomFieldsResponse>({
+      method: HttpMethod.GET,
+      url: `${myCaseApi.baseUrl}${myCaseApi.endpoints.customFields}`,
+      headers: myCaseApi.getAuthHeader(access_token),
+    });
+    return response.body;
+  },
+};
+
+export const parseCustomFieldValue = (customFieldValue: {
+  custom_field_id: number;
+  value: string;
+}) => {
+  return {
+    custom_field: { id: customFieldValue.custom_field_id },
+    value: customFieldValue.value,
+  };
 };

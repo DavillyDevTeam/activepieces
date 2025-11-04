@@ -166,6 +166,21 @@ export interface APILead {
   created_at: string;
 }
 
+export interface APICustomField {
+  id: number;
+  name: string;
+  parent_type: ParentType;
+  field_type: FieldType;
+  list_options: {
+    key: string;
+    option: string;
+    created_at: string;
+    updated_at: string;
+  }[];
+  created_at: string;
+  updated_at: string;
+}
+
 // API Parameters and Response Types
 export interface CreateCaseParams extends AuthenticationParams {
   name: string;
@@ -261,20 +276,7 @@ export interface CreateCustomFieldParams extends AuthenticationParams {
   }[];
 }
 
-export interface CreateCustomFieldResponse {
-  id: number;
-  name: string;
-  parent_type: ParentType;
-  field_type: FieldType;
-  list_options: {
-    key: string;
-    option: string;
-    created_at: string;
-    updated_at: string;
-  }[];
-  created_at: string;
-  updated_at: string;
-}
+export type CreateCustomFieldResponse = APICustomField
 
 export interface CreateCaseDocumentParams extends AuthenticationParams {
   caseId: string;
@@ -601,3 +603,5 @@ export type ListStaffParams = AuthenticationParams;
 export type ListStaffResponse = APIStaff[];
 
 export type ListLeadResponse = APILead[];
+
+export type ListCustomFieldsResponse = APICustomField[];

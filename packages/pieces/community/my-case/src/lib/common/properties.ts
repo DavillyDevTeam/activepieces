@@ -53,27 +53,132 @@ export const clientDropdown = ({ required = false }) =>
     },
   });
 
-export const leadDropdown = ({ required = false }) => Property.Dropdown({
-  displayName: 'Lead',
-  description: 'Select a lead from the list.',
-  required,
-  refreshers: ['auth'],
-  options: async ({ auth }: { auth?: OAuth2PropertyValue }) => {
-    if (!auth) {
+export const multiSelectClientDropdown = ({ required = false }) =>
+  Property.MultiSelectDropdown({
+    displayName: 'Clients',
+    description: 'Select clients from the list.',
+    required,
+    refreshers: ['auth'],
+    options: async ({ auth }: { auth?: OAuth2PropertyValue }) => {
+      if (!auth) {
+        return {
+          options: [],
+          disabled: true,
+          placeholder: 'Please select an authentication first',
+        };
+      }
+      const clients = await myCaseApi.listPersonContacts({
+        access_token: auth.access_token,
+      });
       return {
-        options: [],
-        disabled: true,
-        placeholder: 'Please select an authentication first',
+        options: clients.map((client) => ({
+          label: client.first_name + ' ' + client.last_name,
+          value: client.id,
+        })),
       };
-    }
-    const leads = await myCaseApi.listLeads({
-      access_token: auth.access_token,
-    });
-    return {
-      options: leads.map((lead) => ({
-        label: lead.first_name + ' ' + lead.last_name,
-        value: lead.id,
-      })),
-    };
-  },
-});
+    },
+  });
+
+export const leadDropdown = ({ required = false }) =>
+  Property.Dropdown({
+    displayName: 'Lead',
+    description: 'Select a lead from the list.',
+    required,
+    refreshers: ['auth'],
+    options: async ({ auth }: { auth?: OAuth2PropertyValue }) => {
+      if (!auth) {
+        return {
+          options: [],
+          disabled: true,
+          placeholder: 'Please select an authentication first',
+        };
+      }
+      const leads = await myCaseApi.listLeads({
+        access_token: auth.access_token,
+      });
+      return {
+        options: leads.map((lead) => ({
+          label: lead.first_name + ' ' + lead.last_name,
+          value: lead.id,
+        })),
+      };
+    },
+  });
+
+export const caseStageDropdown = ({ required = false }) =>
+  Property.Dropdown({
+    displayName: 'Case Stage',
+    description: 'Select the stage of the case.',
+    required,
+    refreshers: ['auth'],
+    options: async ({ auth }: { auth?: OAuth2PropertyValue }) => {
+      if (!auth) {
+        return {
+          options: [],
+          disabled: true,
+          placeholder: 'Please select an authentication first',
+        };
+      }
+      const caseStages = await myCaseApi.listCaseStages({
+        access_token: auth.access_token,
+      });
+      return {
+        options: caseStages.map((stage) => ({
+          label: stage.name,
+          value: stage.id,
+        })),
+      };
+    },
+  });
+
+export const practiceAreaDropdown = ({ required = false }) =>
+  Property.Dropdown({
+    displayName: 'Practice Area',
+    description: 'Select the practice area of the case.',
+    required,
+    refreshers: ['auth'],
+    options: async ({ auth }: { auth?: OAuth2PropertyValue }) => {
+      if (!auth) {
+        return {
+          options: [],
+          disabled: true,
+          placeholder: 'Please select an authentication first',
+        };
+      }
+      const practiceAreas = await myCaseApi.listPracticeAreas({
+        access_token: auth.access_token,
+      });
+      return {
+        options: practiceAreas.map((area) => ({
+          label: area.name,
+          value: area.id,
+        })),
+      };
+    },
+  });
+
+export const multiSelectCompanyDropdowns = ({ required = false }) =>
+  Property.MultiSelectDropdown({
+    displayName: 'Companies',
+    description: 'Select companies from the list.',
+    required,
+    refreshers: ['auth'],
+    options: async ({ auth }: { auth?: OAuth2PropertyValue }) => {
+      if (!auth) {
+        return {
+          options: [],
+          disabled: true,
+          placeholder: 'Please select an authentication first',
+        };
+      }
+      const companies = await myCaseApi.listCompanies({
+        access_token: auth.access_token,
+      });
+      return {
+        options: companies.map((company) => ({
+          label: company.name,
+          value: company.id,
+        })),
+      };
+    },
+  });
