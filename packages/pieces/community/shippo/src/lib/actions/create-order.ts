@@ -78,6 +78,14 @@ export const createOrder = createAction({
         // TODO
       }
     }),
+    to_address: Property.DynamicProperties({
+      displayName: 'To Address',
+      required: true,
+      refreshers: [],
+      props: async (propsValue) => {
+        // TODO
+      }
+    })
   },
   async run() {
     // Action logic here
